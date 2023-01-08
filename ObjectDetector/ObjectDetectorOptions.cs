@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Yolov7;
+namespace ObjectDetector;
 
 public class ObjectDetectorOptions
 {

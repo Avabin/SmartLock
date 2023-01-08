@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace Yolov7.Yolov7;
+namespace ObjectDetector.Yolo.Onnx;
 
 public static class RectangleExtensions
 {

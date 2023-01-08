@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using FlashCap;
 
 namespace Webcam;
 
-public interface IWebcamChannel
+public interface IWebcamChannel : IObservable<Memory<byte>>
 {
     Size Resolution { get; }
     uint FrameRate { get; }
-    IObservable<Memory<byte>> FrameObservable { get; }
+    PixelFormats PixelFormat { get; }
 }

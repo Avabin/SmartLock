@@ -8,4 +8,7 @@ public record PluginsVersions(
     [property: JsonProperty("detector")] string Detector,
     [property: JsonProperty("calculator")] string Calculator,
     [property: JsonProperty("mask")] string Mask
-);
+)
+{
+    public static PluginsVersions Empty => new PluginsVersions("", "", "", "", "");
+}

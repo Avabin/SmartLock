@@ -1,9 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace WebcamYolo.Services;
 
 public class VlcOptions
 {
-    [Required]
-    public string VlcPath { get; set; }
+    public string Path { get; set; } = @"C:/Program Files/VideoLAN/VLC/";
 }

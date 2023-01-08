@@ -13,5 +13,5 @@ public class CompreFaceSdkOptions
     public Guid DetectionApiKey { get; set; } = Guid.Empty;
     
     [Required]
-    public Guid TrackingApiKey { get; set; } = Guid.Empty;
+    public Guid VerificationApiKey { get; set; } = Guid.Empty;
 }

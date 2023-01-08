@@ -6,4 +6,23 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ObjectDetector\ObjectDetector.csproj" />
+      <ProjectReference Include="..\Yolo.Core\Yolo.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Emgu.CV" Version="4.6.0.5131" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+      <PackageReference Include="Microsoft.ML" Version="2.0.0" />
+      <PackageReference Include="Microsoft.ML.DataView" Version="2.0.0" />
+      <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.13.1" />
+      <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models" />
+    </ItemGroup>
+
 </Project>

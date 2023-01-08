@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CompreFace.Sdk;
+namespace CompreFace.Sdk.Detection.Models;
 
 public record DetectionMask(
     [property: JsonProperty("probability")]

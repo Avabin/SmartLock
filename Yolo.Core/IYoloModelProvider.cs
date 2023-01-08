@@ -1,4 +1,4 @@
-﻿namespace ObjectDetector.Yolo.Onnx;
+﻿namespace Yolo.Core;
 
 public interface IYoloModelProvider
 {
@@ -6,7 +6,7 @@ public interface IYoloModelProvider
     string GetTinyModelPath();
 }
 
-internal class YoloModelProvider : IYoloModelProvider
+public class YoloModelProvider : IYoloModelProvider
 {
     public string GetE6EModelPath() => @"C:\Users\avabi\PycharmProjects\yolov7\yolov7-e6e.onnx";
 

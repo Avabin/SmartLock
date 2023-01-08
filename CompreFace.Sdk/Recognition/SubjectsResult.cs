@@ -1,3 +1,3 @@
 ﻿namespace CompreFace.Sdk.Recognition;
 
-internal record SubjectsResult(IReadOnlyList<string> Subjects);
+public record SubjectsResult(IReadOnlyList<string> Subjects);

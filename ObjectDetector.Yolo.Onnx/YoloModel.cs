@@ -1,4 +1,6 @@
-﻿namespace Yolov7.Yolov7;
+﻿using Yolo.Core;
+
+namespace ObjectDetector.Yolo.Onnx;
 
 public class YoloModel
 {

@@ -1,9 +1,18 @@
-﻿using System.Drawing;
-using SkiaSharp;
+﻿using Yolo.Core;
 
-namespace Yolov7;
+namespace ObjectDetector;
+
+public interface IObjectDetector<in T> : IObjectDetector where T : IImageData
+{
+    Task<SingleImagePrediction> DetectAsync(T image);
+    Task<MultipleImagePrediction> DetectAsync(IEnumerable<T> images);
+}
 
 public interface IObjectDetector
 {
-    Task<(TimeSpan elapsed, List<DetectionResult> predictions)> DetectAsync(SKBitmap bitmap);
+    Task<SingleImagePrediction> DetectAsync(IImageData image);
+    Task<MultipleImagePrediction> DetectAsync(IEnumerable<IImageData> images);
+    
+    (int Width, int Height) GetInputSize();
+    IReadOnlyCollection<string> GetLabels();
 }

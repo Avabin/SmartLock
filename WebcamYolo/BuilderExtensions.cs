@@ -3,20 +3,16 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Avalonia;
-using Avalonia.Platform;
 using Avalonia.ReactiveUI;
 using Avalonia.Threading;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using PierogiesBotUI.Features.Settings;
 using ReactiveUI;
 using Serilog;
 using Serilog.Extensions.Logging;
 using Splat;
 using Splat.Autofac;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace PierogiesBotUI;
+namespace WebcamYolo;
 
 public static class BuilderExtensions
 {
@@ -55,7 +51,7 @@ public static class BuilderExtensions
         autofacResolver.InitializeSplat();
         autofacResolver.InitializeReactiveUI();
 
-        builder.RegisterModule(new PierogiesBotModule());
+        builder.RegisterModule(new WebcamYoloModule());
         builder.RegisterType<AvaloniaActivationForViewFetcher>().As<IActivationForViewFetcher>().SingleInstance();
         builder.RegisterType<AutoDataTemplateBindingHook>().As<IPropertyBindingHook>().SingleInstance();
         builder.RegisterInstance(MessageBus.Current).As<IMessageBus>();

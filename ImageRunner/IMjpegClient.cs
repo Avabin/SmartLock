@@ -1,6 +1,10 @@
-﻿namespace ImageRunner;
+﻿using RestEase;
 
-public class IMjpegClient
+namespace ImageRunner;
+
+public interface IMjpegClient
 {
+    [Get]
+    Task<Stream> GetStreamAsync();
     
 }

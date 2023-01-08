@@ -1,6 +1,5 @@
-﻿using System.Drawing;
-using SkiaSharp;
+﻿using SkiaSharp;
 
-namespace Yolov7;
+namespace ObjectDetector;
 
 public record DetectionResult(string Label, float Confidence, SKRect BoundingBox);

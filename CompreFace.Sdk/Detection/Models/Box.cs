@@ -2,7 +2,7 @@
 
 namespace CompreFace.Sdk.Detection.Models;
 
-public record DetectionBox(
+public record Box(
     [property: JsonProperty("probability")]
     double Probability,
     [property: JsonProperty("x_max")] int XMax,

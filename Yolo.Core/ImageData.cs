@@ -1,5 +1,6 @@
-﻿using Microsoft.ML.OnnxRuntime;
+﻿namespace Yolo.Core;
 
-namespace ObjectDetector.Yolo.Onnx;
-
-public readonly record struct ImageData(int Width, int Height, NamedOnnxValue Data);
+public abstract record ImageData<T>(int Width, int Height, T Data) : IImageData
+{
+    public abstract void Dispose();
+}

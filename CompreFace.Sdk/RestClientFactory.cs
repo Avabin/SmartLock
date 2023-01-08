@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
 
 namespace CompreFace.Sdk;
 
@@ -16,6 +17,7 @@ internal class RestClientFactory : IRestClientFactory
     {
         var client = new RestClient(Options.BaseUrl);
         client.AddDefaultHeader("X-Api-Key", Options.RecognitionApiKey.ToString("D"));
+        client.UseSerializer<JsonNetSerializer>();
         return client;
     }
     
@@ -23,6 +25,7 @@ internal class RestClientFactory : IRestClientFactory
     {
         var client = new RestClient(Options.BaseUrl);
         client.AddDefaultHeader("X-Api-Key", Options.DetectionApiKey.ToString("D"));
+        client.UseSerializer<JsonNetSerializer>();
         return client;
     }
     
@@ -30,6 +33,7 @@ internal class RestClientFactory : IRestClientFactory
     {
         var client = new RestClient(Options.BaseUrl);
         client.AddDefaultHeader("X-Api-Key", Options.VerificationApiKey.ToString("D"));
+        client.UseSerializer<JsonNetSerializer>();
         return client;
     }
 }

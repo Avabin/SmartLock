@@ -3,13 +3,15 @@ using System.Drawing;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SkiaSharp;
+using Yolo.Core;
 
-namespace Yolov7.Yolov7;
+namespace ObjectDetector.Yolo.Onnx;
 
 public  class Yolov7 : IDisposable
 {
-    private readonly InferenceSession _inferenceSession;
-    private YoloModel _model = new();
+    private readonly Lazy<InferenceSession> _inferenceSession;
+    public YoloModel Model = new();
+    public InferenceSession InferenceSession => _inferenceSession.Value;
 
     public Yolov7(string ModelPath, bool useCuda = false)
     {
@@ -17,12 +19,12 @@ public  class Yolov7 : IDisposable
         if (useCuda)
         {
             SessionOptions opts = SessionOptions.MakeSessionOptionWithCudaProvider();
-            _inferenceSession = new InferenceSession(ModelPath, opts);
+            _inferenceSession = new Lazy<InferenceSession>(() => new InferenceSession(ModelPath, opts));
         }
         else
         {
             SessionOptions opts = new();
-            _inferenceSession = new InferenceSession(ModelPath, opts);
+            _inferenceSession = new Lazy<InferenceSession>(() => new InferenceSession(ModelPath, opts));
         }
 
 
@@ -35,7 +37,7 @@ public  class Yolov7 : IDisposable
     {
         labels.Select((s, i) => new { i, s }).ToList().ForEach(item =>
         {
-            _model.Labels.Add(new YoloLabel { Id = item.i, Name = item.s });
+            Model.Labels.Add(new YoloLabel { Id = item.i, Name = item.s });
         });
     }
 
@@ -45,23 +47,29 @@ public  class Yolov7 : IDisposable
         SetupLabels(s);
     }
 
-    public List<YoloPrediction> Predict(SKBitmap image)
+    public List<YoloPrediction> Predict(OnnxImageData image)
     {
         return ParseDetect(Inference(image)[0], image);
     }
 
-    private List<YoloPrediction> ParseDetect(DenseTensor<float> output, SKBitmap image)
+    public List<List<YoloPrediction>> Predict(IEnumerable<OnnxImageData> images)
+    {
+        var onnxImageDatas = images.ToList();
+        return onnxImageDatas.Select(Predict).ToList();
+    }
+
+    private List<YoloPrediction> ParseDetect(DenseTensor<float> output, OnnxImageData image)
     {
         var result = new ConcurrentBag<YoloPrediction>();
 
         var (w, h) = (image.Width, image.Height); // image w and h
-        var (xGain, yGain) = (_model.Width / (float)w, _model.Height / (float)h); // x, y gains
+        var (xGain, yGain) = (Model.Width / (float)w, Model.Height / (float)h); // x, y gains
         var gain = Math.Min(xGain, yGain); // gain = resized / original
 
-        var (xPad, yPad) = ((_model.Width - w * gain) / 2, (_model.Height - h * gain) / 2); // left, right pads
+        var (xPad, yPad) = ((Model.Width - w * gain) / 2, (Model.Height - h * gain) / 2); // left, right pads
 
         Parallel.For(0, output.Dimensions[0], (int i) => {
-            var label = _model.Labels[(int)output[i,5]];
+            var label = Model.Labels[(int)output[i,5]];
             var prediction = new YoloPrediction(label, output[0,6]);
 
             var xMin = (output[i, 1] - xPad) / gain;
@@ -82,59 +90,39 @@ public  class Yolov7 : IDisposable
             result.Add(prediction);
         });
 
-           
-            
-
         return result.ToList();
     }
 
-    private DenseTensor<float>[] Inference(SKBitmap img)
+    
+
+    private DenseTensor<float>[] Inference(IReadOnlyCollection<OnnxImageData> inputs)
     {
-        SKBitmap resized = null;
+        IDisposableReadOnlyCollection<DisposableNamedOnnxValue> result = InferenceSession.Run(inputs.Select(x => x.Data).ToArray()); // run inference
 
-        if (img.Width != _model.Width || img.Height != _model.Height)
-        {
-            // image must be resized
-            resized = Utils.ResizeImage(img, _model.Width, _model.Height); // fit image size to specified input size
-        }
-        else
-        {
-            // image does not need to be resized
-            resized = img;
-        }
+        return Model.Outputs.Select(item => (DenseTensor<float>) result.First(x => x.Name == item).Value).ToArray();
+    }
+    private DenseTensor<float>[] Inference(OnnxImageData input)
+    { // run inference
+        IDisposableReadOnlyCollection<DisposableNamedOnnxValue> result = InferenceSession.Run(new List<NamedOnnxValue> {input.Data}); // run inference
 
-        var inputs = new List<NamedOnnxValue> // add image as onnx input
-        {
-            NamedOnnxValue.CreateFromTensor("images", Utils.ExtractPixels(resized))
-        };
-
-        IDisposableReadOnlyCollection<DisposableNamedOnnxValue> result = _inferenceSession.Run(inputs); // run inference
-
-        var output = new List<DenseTensor<float>>();
-
-        foreach (var item in _model.Outputs) // add outputs for processing
-        {
-            output.Add(result.First(x => x.Name == item).Value as DenseTensor<float>);
-        };
-
-        return output.ToArray();
+        return Model.Outputs.Select(item => (DenseTensor<float>) result.First(x => x.Name == item).Value).ToArray();
     }
 
     private void get_input_details()
     {
-        _model.Height = _inferenceSession.InputMetadata["images"].Dimensions[2];
-        _model.Width = _inferenceSession.InputMetadata["images"].Dimensions[3];
+        Model.Height = InferenceSession.InputMetadata["images"].Dimensions[2];
+        Model.Width = InferenceSession.InputMetadata["images"].Dimensions[3];
     }
 
     private void get_output_details()
     {
-        _model.Outputs = _inferenceSession.OutputMetadata.Keys.ToArray();
-        _model.Dimensions = _inferenceSession.OutputMetadata[_model.Outputs[0]].Dimensions[1];
-        _model.UseDetect = !(_model.Outputs.Any(x => x == "score"));
+        Model.Outputs = InferenceSession.OutputMetadata.Keys.ToArray();
+        Model.Dimensions = InferenceSession.OutputMetadata[Model.Outputs[0]].Dimensions[1];
+        Model.UseDetect = !(Model.Outputs.Any(x => x == "score"));
     }
 
     public void Dispose()
     {
-        _inferenceSession.Dispose();
+        InferenceSession.Dispose();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ObjectDetector.Yolo.Onnx;
+﻿namespace Yolo.Core;
 
 public enum YoloLabelKind
 {

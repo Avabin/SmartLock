@@ -1,7 +1,8 @@
-﻿using Microsoft.ML.OnnxRuntime.Tensors;
+﻿using Emgu.CV;
+using Microsoft.ML.OnnxRuntime.Tensors;
 using SkiaSharp;
 
-namespace Yolov7.Yolov7;
+namespace ObjectDetector.Yolo.Onnx;
 
 public static class Utils
 {
@@ -58,4 +59,43 @@ public static class Utils
             : (value > max) 
                 ? max 
                 : value;
+
+    public static Tensor<float> ExtractPixels(ArraySegment<byte> bytes, int modelWidth, int modelHeight)
+    {
+        var tensor = new DenseTensor<float>(new[] { 1, 3, modelHeight, modelWidth });
+        var index = 0;
+        for (var y = 0; y < modelHeight; y++)
+        {
+            for (var x = 0; x < modelWidth; x++)
+            {
+                tensor[0, 0, y, x] = bytes[index + 2] / 255f;
+                tensor[0, 1, y, x] = bytes[index + 1] / 255f;
+                tensor[0, 2, y, x] = bytes[index] / 255f;
+                index += 3;
+            }
+        }
+        
+        return tensor;
+    }
+
+    public static Tensor<float> ExtractPixels(Mat image)
+    {
+        // extract tensor from emgucv image
+        var tensor = new DenseTensor<float>(new[] { 1, 3, image.Height, image.Width });
+        var width = image.Width;
+        var height = image.Height;
+        
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var pixelData = image.GetRawData(y, x);
+                tensor[0, 0, y, x] = pixelData[0] / 255f;
+                tensor[0, 1, y, x] = pixelData[1] / 255f;
+                tensor[0, 2, y, x] = pixelData[2] / 255f;
+            }
+        }
+        
+        return tensor;
+    }
 }

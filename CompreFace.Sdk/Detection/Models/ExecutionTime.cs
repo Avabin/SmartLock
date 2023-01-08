@@ -2,7 +2,7 @@
 
 namespace CompreFace.Sdk.Detection.Models;
 
-public record DetectionExecutionTime(
+public record ExecutionTime(
     [property: JsonProperty("age")] int Age,
     [property: JsonProperty("gender")] int Gender,
     [property: JsonProperty("detector")] int Detector,
