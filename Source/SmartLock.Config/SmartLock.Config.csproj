@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SmartLock.Orleans.Core\SmartLock.Orleans.Core.csproj" />
+      <ProjectReference Include="..\SmartLock.Streams.RabbitMQ\SmartLock.Streams.RabbitMQ.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Orleans.Streaming.AzureStorage" Version="7.1.0" />
+      <PackageReference Include="Orleans.Clustering.Redis" Version="7.0.0" />
+      <PackageReference Include="Orleans.Persistence.Redis" Version="7.0.0" />
+      <PackageReference Include="Orleans.Providers.MongoDB" Version="7.4.0" />
+    </ItemGroup>
+
+</Project>

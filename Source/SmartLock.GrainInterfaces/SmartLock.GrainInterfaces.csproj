@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MemoryPack" Version="1.9.12" />
+      <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SmartLock.Client\SmartLock.Client.csproj" />
+      <ProjectReference Include="..\SmartLock.Orleans.Core\SmartLock.Orleans.Core.csproj" />
+    </ItemGroup>
+
+</Project>

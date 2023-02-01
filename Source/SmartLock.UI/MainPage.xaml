@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:SmartLock.Client.Models;assembly=SmartLock.Client"
+             xmlns:buildings="using:SmartLock.UI.ViewModels.Buildings"
+             xmlns:viewModels="using:SmartLock.UI.ViewModels"
+             xmlns:converters="clr-namespace:SmartLock.UI.Converters"
+             x:Class="SmartLock.UI.MainPage" x:DataType="buildings:BuildingsViewModel">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout
+            Spacing="25"
+            Padding="30,0"
+            VerticalOptions="Center">
+
+            <ListView
+                x:Name="LocksList"
+                ItemsSource="{Binding Locks}"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:LockViewModel">
+                        <TextCell Text="{Binding Location}" TextColor="{Binding Color}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Entry Text="{Binding Location}"/>
+            <Button
+                x:Name="CounterBtn"
+                Text="Click me"
+                SemanticProperties.Hint="Load building"
+                Command="{Binding LoadBuildingsCommand}"
+                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

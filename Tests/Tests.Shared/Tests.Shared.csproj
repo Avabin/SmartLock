@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+        <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="7.1.0" />
+        <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="7.1.0" />
+        <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="7.1.0" />
+        <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="7.1.0" />
+        <PackageReference Include="Microsoft.Orleans.Streaming.AzureStorage" Version="7.1.0" />
+        <PackageReference Include="Microsoft.Orleans.TestingHost" Version="7.1.0" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
+        <PackageReference Include="NUnit.Analyzers" Version="3.5.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.2.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Orleans.Clustering.Redis" Version="7.0.0" />
+        <PackageReference Include="Orleans.Persistence.Redis" Version="7.0.0" />
+        <PackageReference Include="Orleans.Providers.MongoDB" Version="7.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Source\SmartLock.Orleans.Core\SmartLock.Orleans.Core.csproj" />
+      <ProjectReference Include="..\..\Source\SmartLock.Streams.RabbitMQ\SmartLock.Streams.RabbitMQ.csproj" />
+      <ProjectReference Include="..\..\Source\SmartLock.WebApi\SmartLock.WebApi.csproj" />
+    </ItemGroup>
+
+</Project>
