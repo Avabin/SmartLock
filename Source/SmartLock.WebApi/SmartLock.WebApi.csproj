@@ -5,10 +5,16 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <ContainerImageName>ghcr.io/avabin/smartlock/api</ContainerImageName>
+        <ContainerImageTag>latest</ContainerImageTag>
     </PropertyGroup>
 
     <ItemGroup>
+        <ContainerLabel Include="org.opencontainers.image.source" Value="https://github.com/Avabin/SmartLock"/>
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
         <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
@@ -23,6 +29,7 @@
       <ProjectReference Include="..\SmartLock.Client\SmartLock.Client.csproj" />
       <ProjectReference Include="..\SmartLock.Config\SmartLock.Config.csproj" />
       <ProjectReference Include="..\SmartLock.GrainInterfaces\SmartLock.GrainInterfaces.csproj" />
+      <ProjectReference Include="..\SmartLock.ObjectStorage\SmartLock.ObjectStorage.csproj" />
     </ItemGroup>
 
 </Project>

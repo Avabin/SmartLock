@@ -9,6 +9,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddSmartLockClient(this IServiceCollection services, string baseUrl)
     {
+        services.AddTransient<IClientSettingsService, ClientSettingsService>();
+        services.AddTransient<IDetectionService, DetectionService>();
         services.AddTransient<IBuildingsService, BuildingsService>();
         services.AddSingleton<ObservableNotificationReceiver>();
         services.AddSingleton<INotificationReceiver>(provider => provider.GetRequiredService<ObservableNotificationReceiver>());

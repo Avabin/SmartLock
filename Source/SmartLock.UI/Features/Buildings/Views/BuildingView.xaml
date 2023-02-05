@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
+             xmlns:ui="clr-namespace:SmartLock.UI"
+             xmlns:converters="clr-namespace:SmartLock.UI.Converters"
+             x:Class="SmartLock.UI.Features.Buildings.Views.BuildingView" x:DataType="viewModels:BuildingViewModel"
+             Shell.NavBarIsVisible="false">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:LockViewModelToFontImageSourceConverter x:Key="LockViewModelToFontImageSourceConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <HorizontalStackLayout Margin="5,5,5,5" HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Image>
+            <Image.Source>
+                <FontImageSource
+                    FontFamily="MaterialIconsRegular" Glyph="{Binding {x:Static ui:MaterialIcons.OfficeBuilding}}"
+                    Color="{Binding SignalColor}" />
+            </Image.Source>
+        </Image>
+        <Label Text="{Binding Location}" TextColor="{Binding SignalColor}" Margin="10,10,10,10"
+               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        <CollectionView ItemsSource="{Binding Locks}" >
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:LockViewModel">
+                    <ViewCell>
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource FontFamily="MaterialIconsRegular"
+                                                 Size="20"
+                                                 Glyph="{Binding .,Converter={StaticResource LockViewModelToFontImageSourceConverter}}"
+                                                 Color="{Binding LockColor}" />
+                            </Image.Source>
+                        </Image>
+                    </ViewCell>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </HorizontalStackLayout>
+</ContentView>

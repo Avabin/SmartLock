@@ -1,10 +1,12 @@
 ﻿// Unit tests entrypoint based on SmartLock.WebApi.Program
 
 using System.Reflection;
+using Moq;
 using SmartLock.Client;
 using SmartLock.Client.NotificationHub;
 using SmartLock.WebApi.Hubs;
 using Tests.Shared;
+using Yolov8.Client;
 
 var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 var assemblyDirectory = new DirectoryInfo(assemblyPath);
@@ -19,7 +21,6 @@ var builder = WebApplication.CreateBuilder(newArgs.ToArray());
 // get this assembly path
 builder.Host.UseContentRoot(contentRoot);
 // get the path to the web api project
-
 builder.Services.AddSingleton(SmartLock.Grains.Tests.WebApi.Unit.Program.Client ?? throw new InvalidOperationException("Cluster client is not implemented! Copy client from cluster into IHasClusterClient.Client!"));
 
 // Add services to the container.

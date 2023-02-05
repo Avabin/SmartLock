@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:SmartLock.UI.Converters"
+             xmlns:viewModels="clr-namespace:SmartLock.UI.ViewModels"
+             xmlns:converters1="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:notificationHub="clr-namespace:SmartLock.Client.NotificationHub;assembly=SmartLock.Client"
+             xmlns:notifications="clr-namespace:SmartLock.UI.Features.Notifications"
+             x:Class="SmartLock.UI.Features.Notifications.NotificationsStatusView" x:DataType="notifications:NotificationsStatusViewModel">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:ConnectionStatusToIconGlyphConverter x:Key="Converter" />
+            <converters:ConnectionStatusToColorConverter x:Key="ConnectionStatusToColorConverter"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Image>
+        <Image.Source>
+            <FontImageSource FontFamily="MaterialIconsRegular" Glyph="{Binding ConnectionStatus,Converter={StaticResource Converter}}"
+                             Color="{Binding ConnectionStatus, Converter={StaticResource ConnectionStatusToColorConverter}}" />
+        </Image.Source>
+    </Image>
+</ContentView>

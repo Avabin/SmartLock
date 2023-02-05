@@ -7,6 +7,7 @@ using SmartLock.Client.Models;
 using SmartLock.Client.NotificationHub;
 using SmartLock.Config;
 using SmartLock.Config.Strategies;
+using SmartLock.ObjectStorage;
 using SmartLock.Orleans.Core;
 using SmartLock.WebApi.Hubs;
 
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var strategy = builder.Configuration.GetValue<string>("ClientStrategy", Strategy.Local);
 builder.UseOrleansClientStrategy(strategy!);
+builder.Services.AddMinioObjectStorage(builder.Configuration.GetSection("Minio"));
 
 // Add services to the container.
 builder.Services.AddSingleton<NotificationsHubService>();

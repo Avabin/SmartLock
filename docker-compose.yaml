@@ -1,0 +1,41 @@
+# mongo service
+services:
+  mongo:
+    image: mongo:latest
+    container_name: smartlock-mongo
+    restart: always
+    ports:
+      - 27017:27017
+  rabbitmq:
+    image: rabbitmq:streams
+    build:
+      dockerfile: rabbitmq/Dockerfile
+    container_name: smartlock-rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 5552:5552
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+  yolov8-api:
+    image: ghcr.io/avabin/smartlock/yolov8-api:latest
+    container_name: smartlock-yolov8-api
+    restart: always
+    ports:
+      - 50051:50051
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: smartlock-azurite
+    restart: always
+    ports:
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002

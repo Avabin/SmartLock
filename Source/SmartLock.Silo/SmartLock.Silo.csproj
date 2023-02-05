@@ -4,12 +4,22 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <ContainerImageName>ghcr.io/avabin/smartlock/silo</ContainerImageName>
+        <ContainerImageTag>latest</ContainerImageTag>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SmartLock.Config\SmartLock.Config.csproj" />
       <ProjectReference Include="..\SmartLock.GrainInterfaces\SmartLock.GrainInterfaces.csproj" />
       <ProjectReference Include="..\SmartLock.Grains\SmartLock.Grains.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ContainerLabel Include="org.opencontainers.image.source" Value="https://github.com/Avabin/SmartLock"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,12 @@
+﻿venv/
+Dockerfile
+gen_protos.ps1
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.vs/
+.vscode/
+

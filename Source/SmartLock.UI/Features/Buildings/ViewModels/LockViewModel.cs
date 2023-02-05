@@ -1,22 +1,31 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SmartLock.Client.Models;
-using SmartLock.UI.ViewModels.Buildings;
 using IEvent = SmartLock.Client.Models.IEvent;
 
-namespace SmartLock.UI.ViewModels;
+namespace SmartLock.UI.Features.Buildings.ViewModels;
 
-public partial class LockViewModel : INotifyPropertyChanged
+public partial class LockViewModel : ObservableObject
 {
     private readonly IObservable<Notification<IEvent>> _observable;
-    public string Location { get; set; }
-    public bool IsLocked { get; set; } = true;
-    public Color Color => IsLocked ? Colors.Red : Colors.Green;
+    [ObservableProperty] private string _location;
+    [ObservableProperty]
+    private bool _isLocked = true;
+
+    [ObservableProperty] private Color _lockColor;
 
     public LockViewModel(LockModel status, IObservable<Notification<IEvent>> observable)
     {
         _observable = observable;
         Location = status.Location.Value;
         IsLocked = !status.IsOpen;
+
+        this.PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName is nameof(IsLocked))
+            {
+                this.LockColor = IsLocked ? Colors.Red : Colors.Green;
+            }
+        };
 
         _observable.Subscribe(notification =>
         {

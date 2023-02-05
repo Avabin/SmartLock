@@ -1,14 +1,10 @@
-﻿using System.Collections.Concurrent;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-using FluentAssertions;
-using Orleans.Streams;
+﻿using FluentAssertions;
 using Orleans.TestingHost;
 using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
 using Tests.Shared;
 
-namespace SmartLock.Grains.Tests.JournaledBuildingGrain;
+namespace SmartLock.Grains.Tests.Grains.JournaledBuildingGrain;
 
 [Parallelizable(ParallelScope.Children)]
 public abstract class JournaledBuildingGrainTestsBase<T, TClient> : GrainTestBase<T, TClient> where T : ISiloConfigurator, new() where TClient : IClientBuilderConfigurator, new()

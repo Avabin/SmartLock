@@ -3,19 +3,22 @@ using Orleans.TestingHost;
 using SmartLock.GrainInterfaces;
 using Tests.Shared;
 
-namespace SmartLock.Grains.Tests.DetectorGrain;
+namespace SmartLock.Grains.Tests.Grains.DetectorGrain;
 
 public abstract class DetectorGrainTestsBase<TSiloConfigurator, TClientConfigurator> : GrainTestBase<TSiloConfigurator, TClientConfigurator>
     where TSiloConfigurator : ISiloConfigurator, new()
     where TClientConfigurator : IClientBuilderConfigurator, new()
 {
+    protected static string CorrectUrl => "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+    protected static string NotImageUrl => "https://www.google.com/images/branding/googlelogo/2x/internal.docx";
+    protected static string BadUrl = ":::::::@:!#:!@:#:!@:#:@! :#:!V:@:#: !:@:#:!:@:#:!@: V#:!:@#V:!@:# :!@: #";
     [Test]
     public async Task When_DetectAsync_DetectionsAreReturned()
     {
         // Arrange
         var key = Guid.NewGuid();
         var grain = this.GrainFactory.GetGrain<IDetectorGrain>(key);
-        var imgUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+        var imgUrl = CorrectUrl;
         
         // Act
         var result = await grain.DetectAsync(imgUrl);
@@ -23,7 +26,14 @@ public abstract class DetectorGrainTestsBase<TSiloConfigurator, TClientConfigura
         // Assert
         
         result.Should().NotBeNull();
-        result.Detections.Should().NotBeEmpty();
+        foreach (var detections in result)
+        {
+            foreach (var d in detections.Detections)
+            {
+                d.Class.Should().NotBeNullOrWhiteSpace();
+                d.Confidence.Should().BeGreaterThan(0);
+            }
+        }
     }
 
     [Test]
@@ -32,7 +42,7 @@ public abstract class DetectorGrainTestsBase<TSiloConfigurator, TClientConfigura
         // Arrange
         var key = Guid.NewGuid();
         var grain = this.GrainFactory.GetGrain<IDetectorGrain>(key);
-        var imgUrl = "https://www.google.com/images/branding/googlelogo/2x/internal.docx";
+        var imgUrl = NotImageUrl;
         
         // Act
         Func<Task> act = async () => await grain.DetectAsync(imgUrl);
@@ -47,7 +57,7 @@ public abstract class DetectorGrainTestsBase<TSiloConfigurator, TClientConfigura
         // Arrange
         var key = Guid.NewGuid();
         var grain = this.GrainFactory.GetGrain<IDetectorGrain>(key);
-        var imgUrl = ":::::::@:!#:!@:#:!@:#:@! :#:!V:@:#: !:@:#:!:@:#:!@: V#:!:@#V:!@:# :!@: #";
+        var imgUrl = BadUrl;
         
         // Act
         Func<Task> act = async () => await grain.DetectAsync(imgUrl);

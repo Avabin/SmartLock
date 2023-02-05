@@ -3,4 +3,5 @@
 public interface ISiloStrategy
 {
     void Configure(WebApplicationBuilder builder);
+    void Configure(HostApplicationBuilder builder);
 }

@@ -1,7 +1,6 @@
 ﻿using SmartLock.Client.Models;
-using SmartLock.UI.ViewModels.Buildings;
 
-namespace SmartLock.UI.ViewModels;
+namespace SmartLock.UI.Features.Buildings.ViewModels;
 
 public class LockViewModelFactory
 {

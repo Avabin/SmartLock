@@ -30,6 +30,7 @@
       <ProjectReference Include="..\..\Source\SmartLock.GrainInterfaces\SmartLock.GrainInterfaces.csproj" />
       <ProjectReference Include="..\..\Source\SmartLock.Grains\SmartLock.Grains.csproj" />
       <ProjectReference Include="..\..\Source\SmartLock.WebApi\SmartLock.WebApi.csproj" />
+      <ProjectReference Include="..\..\Source\Yolov8.Client\Yolov8.Client.csproj" />
       <ProjectReference Include="..\Tests.Shared\Tests.Shared.csproj" />
     </ItemGroup>
 

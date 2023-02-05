@@ -12,6 +12,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <!-- Display name -->
         <ApplicationTitle>SmartLock.UI</ApplicationTitle>
+        <UsingMauiEssentials>true</UsingMauiEssentials>
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.smartlock.ui</ApplicationId>
@@ -27,6 +28,7 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -48,17 +50,143 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Maui" Version="4.0.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
         <PackageReference Include="Fody" Version="6.6.4">
-          <PrivateAssets>all</PrivateAssets>
+          <PrivateAssets>All</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="7.0.59" />
+        <PackageReference Include="Polly" Version="7.2.3" />
+        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SmartLock.Client\SmartLock.Client.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiXaml Update="Pages\MainPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Buildings\Views\BuildingView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Buildings\Views\LockView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Buildings\Pages\BuildingPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Buildings\Pages\BuildingsPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Detection\Pages\DetectionPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Notifications\NotificationsStatusView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Features\Settings\SettingsPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\MainPage.xaml.cs">
+        <DependentUpon>MainPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Platforms\Tizen\DeviceIdService.cs">
+        <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+      </Compile>
+      <Compile Update="Platforms\MacCatalyst\DeviceIdService.cs">
+        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+      </Compile>
+      <Compile Update="Platforms\iOS\DeviceIdService.cs">
+        <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+      </Compile>
+      <Compile Update="Buildings\Views\BuildingView.xaml.cs">
+        <DependentUpon>BuildingView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Buildings\Views\LockView.xaml.cs">
+        <DependentUpon>LockView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Buildings\Pages\BuildingPage.xaml.cs">
+        <DependentUpon>BuildingPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Buildings\Pages\BuildingsPage.xaml.cs">
+        <DependentUpon>BuildingsPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Detection\Pages\DetectionPage.xaml.cs">
+        <DependentUpon>DetectionPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Notifications\NotificationsStatusView.xaml.cs">
+        <DependentUpon>NotificationsStatusView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Settings\SettingsPage.xaml.cs">
+        <DependentUpon>SettingsPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <!-- Android -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-android')) != true">
+        <Compile Remove="**\Android\**\*.cs" />
+        <None Include="**\Android\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- Both iOS and Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-ios')) != true AND $(TargetFramework.StartsWith('net7.0-maccatalyst')) != true">
+        <Compile Remove="**\MaciOS\**\*.cs" />
+        <None Include="**\MaciOS\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- iOS -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-ios')) != true">
+        <Compile Remove="**\iOS\**\*.cs" />
+        <None Include="**\iOS\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-maccatalyst')) != true">
+        <Compile Remove="**\MacCatalyst\**\*.cs" />
+        <None Include="**\MacCatalyst\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- Windows -->
+    <ItemGroup Condition="$(TargetFramework.Contains('-windows')) != true">
+        <Compile Remove="**\Windows\**\*.cs" />
+        <None Include="**\Windows\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="appsettings.json" />
+      <EmbeddedResource Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Views" />
+    </ItemGroup>
+    <ItemGroup>
+      <AdditionalFiles Include="Features\Buildings\Pages\BuildingPage.xaml" />
+      <AdditionalFiles Include="Features\Buildings\Pages\BuildingsPage.xaml" />
+      <AdditionalFiles Include="Features\Buildings\Views\BuildingView.xaml" />
+      <AdditionalFiles Include="Features\Buildings\Views\LockView.xaml" />
+      <AdditionalFiles Include="Features\Detection\Pages\DetectionPage.xaml" />
+      <AdditionalFiles Include="Features\Notifications\NotificationsStatusView.xaml" />
     </ItemGroup>
 
 </Project>

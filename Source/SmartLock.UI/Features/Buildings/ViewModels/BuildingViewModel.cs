@@ -1,40 +1,59 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reactive.Concurrency;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Newtonsoft.Json;
 using SmartLock.Client.HttpClient;
 using SmartLock.Client.Models;
 using SmartLock.Client.NotificationHub;
 
-namespace SmartLock.UI.ViewModels.Buildings;
+namespace SmartLock.UI.Features.Buildings.ViewModels;
 
-public partial class BuildingsViewModel : ObservableObject
+public partial class BuildingViewModel : ObservableObject, IDisposable
 {
     private readonly NotificationsHubClient _notificationsHubClient;
     private readonly IBuildingsService _buildingsService;
     private readonly LockViewModelFactory _lockViewModelFactory;
-    private readonly IObservable<Notification<IEvent>> _observable;
+    private readonly IObservable<Client.Models.Notification<IEvent>> _observable;
 
     [field: ObservableProperty]
     public ObservableCollection<LockViewModel> Locks { get; set; } = new();
     
+    public ObservableCollection<LockViewModel> SortedLocks {get; set;} = new();
+    
     [field: ObservableProperty]
     public string Location { get; set; } = string.Empty;
+    
+    [field: ObservableProperty] public Color SignalColor { get; set; } = Colors.DarkViolet;
+    
+    private ISubject<Unit> _changing = new Subject<Unit>();
+    public IObservable<Unit> Changing => _changing.AsObservable();
+    private CompositeDisposable _disposables = new();
 
-    private Task _clientStartTask;
-
-    public BuildingsViewModel(INotificationsHubClient notificationsHubClient, IBuildingsService buildingsService, LockViewModelFactory lockViewModelFactory, IObservable<Notification<IEvent>> observable)
+    public BuildingViewModel(INotificationsHubClient notificationsHubClient, IBuildingsService buildingsService, LockViewModelFactory lockViewModelFactory, IObservable<Client.Models.Notification<IEvent>> observable)
     {
         _notificationsHubClient = (NotificationsHubClient)notificationsHubClient;
         _buildingsService = buildingsService;
         _lockViewModelFactory = lockViewModelFactory;
         _observable = observable;
-        _clientStartTask = _notificationsHubClient.StartAsync();
 
-        _observable.Select(x => HandleEventAsync(x).ToObservable()).Concat().Subscribe();
+        var d = (IDisposable d) => _disposables.Add(d);
+        d(_observable.Select(x => HandleEventAsync(x).ToObservable()).Concat().Subscribe());
+        
+        d(Changing.Select(x => BlinkAsync().ToObservable()).Concat().Subscribe());
+    }
+
+    private async Task BlinkAsync()
+    {
+        var oldColor = SignalColor;
+        SignalColor = Colors.Red;
+        await Task.Delay(250).ConfigureAwait(false);
+        SignalColor = Colors.White;
+        await Task.Delay(250).ConfigureAwait(false);
+        SignalColor = oldColor;
     }
 
     private async Task HandleEventAsync(INotification<IEvent> notification)
@@ -44,6 +63,7 @@ public partial class BuildingsViewModel : ObservableObject
             return;
         }
 
+        _changing.OnNext(Unit.Default);
         switch (notification.Data)
         {
             case AddLock addLockEvent:
@@ -66,9 +86,8 @@ public partial class BuildingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task LoadBuildingsAsync()
+    private async Task LoadAsync()
     {
-        await _clientStartTask;
         var locations = await _buildingsService.GetLocksAsync(new LocationModel(Location));
 
         Locks.Clear();
@@ -76,7 +95,17 @@ public partial class BuildingsViewModel : ObservableObject
         {
             Locks.Add(_lockViewModelFactory.Create(location));
         }
+        SortedLocks.Clear();
+        foreach (var lockViewModel in Locks.OrderBy(x => x.Location))
+        {
+            SortedLocks.Add(lockViewModel);
+        }
 
         await _notificationsHubClient.SubscribeAsync(Location);
+    }
+
+    public void Dispose()
+    {
+        _disposables.Dispose();
     }
 }

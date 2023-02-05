@@ -4,7 +4,7 @@ using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
 using Tests.Shared;
 
-namespace SmartLock.Grains.Tests.LockGrain;
+namespace SmartLock.Grains.Tests.Grains.LockGrain;
 
 public class LockGrainTestsBase<TSiloConfigurator, TClientConfigurator> : GrainTestBase<TSiloConfigurator, TClientConfigurator>
     where TSiloConfigurator : ISiloConfigurator, new()

@@ -1,0 +1,37 @@
+﻿syntax = "proto3";
+
+package yolo;
+
+service YoloDetectionService {
+  rpc DetectStream (stream YoloDetectionRequest) returns (stream YoloDetectionResponse) {}
+  rpc Detect (YoloDetectionRequest) returns (YoloDetectionResponse) {}
+  rpc DetectUrl (YoloDetectionUrlRequest) returns (YoloDetectionResponse) {}
+}
+
+message YoloDetectionUrlRequest {
+  string url = 1;
+  YoloParams params = 2;
+}
+
+message YoloDetectionRequest {
+  bytes image = 1;
+  YoloParams params = 2;
+}
+
+message YoloDetectionResponse {
+  repeated YoloDetectionResult results = 1;
+  YoloParams params = 2;
+}
+message YoloParams {
+  float conf_threshold = 1;
+  float iou_threshold = 2;
+}
+
+message YoloDetectionResult {
+  string label = 1;
+  float confidence = 2;
+  int64 x1 = 3;
+  int64 y1 = 4;
+  int64 x2 = 5;
+  int64 y2 = 6;
+}

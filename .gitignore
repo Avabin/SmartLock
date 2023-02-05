@@ -10,3 +10,7 @@ riderModule.iml
 *.gif
 *.exe
 *.jpeg
+venv/
+*.pyc
+*.pyo
+*.pyd

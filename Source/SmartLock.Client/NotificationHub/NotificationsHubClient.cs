@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using System.Data;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
+using Polly;
 using SmartLock.Client.Models;
 
 namespace SmartLock.Client.NotificationHub;
@@ -8,9 +12,14 @@ public class NotificationsHubClient : INotificationsHubClient
 {
     private readonly IEnumerable<INotificationReceiver> _receivers;
     private HubConnection _hubConnection;
+    private ISubject<ConnectionStatus> _connectionState = new ReplaySubject<ConnectionStatus>(1);
+    public IObservable<ConnectionStatus> ConnectionState => _connectionState.AsObservable();
+    private IAsyncPolicy _policy = Policy.Handle<Exception>()
+        .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt), 30)));
 
     public NotificationsHubClient(string baseUrl, IEnumerable<INotificationReceiver> receivers)
     {
+        _connectionState.OnNext(ConnectionStatus.Disconnected);
         _receivers = receivers;
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{baseUrl}{INotificationsHubClient.HubPath}")
@@ -19,15 +28,32 @@ public class NotificationsHubClient : INotificationsHubClient
         
         _hubConnection.Closed += async (error) =>
         {
+            _connectionState.OnNext(ConnectionStatus.Disconnected);
             await Task.Delay(Random.Shared.Next(0, 5) * 1000);
+            _connectionState.OnNext(ConnectionStatus.Connecting);
             await _hubConnection.StartAsync();
         };
 
+        _connectionState.OnNext(ConnectionStatus.Created);
     }
     
-    public async Task StartAsync()
+    public async Task StartAsync() => 
+        await _policy.ExecuteAsync(StartAsyncInner);
+
+    private async Task StartAsyncInner()
     {
-        await _hubConnection.StartAsync();
+        
+        _connectionState.OnNext(ConnectionStatus.Connecting);
+        try
+        {
+            await _hubConnection.StartAsync();
+            _connectionState.OnNext(ConnectionStatus.Connected);
+        }
+        catch (Exception e)
+        {
+            _connectionState.OnNext(ConnectionStatus.Disconnected);
+            throw;
+        }
     }
 
     public async Task SubscribeAsync(string key)
@@ -48,4 +74,13 @@ public class NotificationsHubClient : INotificationsHubClient
         TypeNameHandling = TypeNameHandling.All,
         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
     };
+}
+
+public enum ConnectionStatus
+{
+    Unknown,
+    Created,
+    Connecting,
+    Connected,
+    Disconnected
 }

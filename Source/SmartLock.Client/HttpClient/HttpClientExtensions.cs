@@ -4,7 +4,7 @@ using SmartLock.Client.Models;
 
 namespace SmartLock.Client.HttpClient;
 
-public static class HttpClientExtensions
+internal static class HttpClientExtensions
 {
     #region ClientController
     public static async Task RegisterClientAsync(this System.Net.Http.HttpClient client, string deviceId, string name, string? defaultBuilding = null)
@@ -105,5 +105,40 @@ public static class HttpClientExtensions
         responseMessage.EnsureSuccessStatusCode();
     }
 
+    #endregion
+    
+    #region DetectionController
+    
+    // api/Detection/detect with image url
+    public static async Task<IReadOnlyList<DetectedObjectModel>> DetectAsync(this System.Net.Http.HttpClient client, string imageUrl)
+    {
+        var responseMessage = await client.GetAsync($"api/Detection/detect?imageUrl={imageUrl}");
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            var error = await responseMessage.Content.ReadAsStringAsync();
+            throw new HttpRequestException(error);
+        }
+        
+        return await responseMessage.Content.ReadFromJsonAsync<IReadOnlyList<DetectedObjectModel>>()!;
+    }
+    
+    // api/Detection/detect with image stream as multipart form data
+    public static async Task<IReadOnlyList<DetectedObjectModel>> DetectAsync(this System.Net.Http.HttpClient client, Stream imageStream)
+    {
+        var content = new MultipartFormDataContent();
+        content.Add(new StreamContent(imageStream), "file", "image.jpg");
+        
+        var responseMessage = await client.PostAsync("api/Detection/detect", content);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            var error = await responseMessage.Content.ReadAsStringAsync();
+            throw new HttpRequestException(error);
+        }
+        
+        return await responseMessage.Content.ReadFromJsonAsync<IReadOnlyList<DetectedObjectModel>>() ?? Array.Empty<DetectedObjectModel>();
+    }
+    
     #endregion
 }

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:ui="clr-namespace:SmartLock.UI"
+             xmlns:global="clr-namespace:"
+             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
+             x:Class="SmartLock.UI.Features.Buildings.Views.LockView" x:DataType="viewModels:LockViewModel">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:BoolToObjectConverter x:Key="BoolToObjectConverter">
+                <converters:BoolToObjectConverter.FalseObject>
+                    <FontImageSource FontFamily="MaterialIconsRegular" Glyph="{x:Static ui:MaterialIcons.LockOpen}" Color="{Binding LockColor}"/>
+                </converters:BoolToObjectConverter.FalseObject>
+                <converters:BoolToObjectConverter.TrueObject>
+                    <FontImageSource FontFamily="MaterialIconsRegular" Glyph="{x:Static ui:MaterialIcons.Lock}" Color="{Binding LockColor}"/>
+                </converters:BoolToObjectConverter.TrueObject>
+            </converters:BoolToObjectConverter>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Grid Padding="30" ColumnDefinitions="Auto, Auto">
+        <Label Margin="10" Text="{Binding Location}" VerticalOptions="End"/>
+        <Image Margin="10" Grid.Column="1" Source="{Binding IsLocked,Converter={StaticResource BoolToObjectConverter}}"
+               VerticalOptions="End"/>
+    </Grid>
+</ContentView>

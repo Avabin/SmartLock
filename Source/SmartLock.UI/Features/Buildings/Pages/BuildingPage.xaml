@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:SmartLock.UI.Features.Buildings.Views"
+             xmlns:notifications="clr-namespace:SmartLock.UI.Features.Notifications"
+             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
+             x:Class="SmartLock.UI.Features.Buildings.Pages.BuildingPage" x:DataType="viewModels:BuildingViewModel">
+
+    <Grid Padding="30,0" RowDefinitions="Auto, *, Auto" ColumnDefinitions="1*,10*,1*">
+        <Entry Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Location}" IsReadOnly="True" />
+        <ListView
+            Grid.Row="1"
+            Grid.ColumnSpan="3"
+            ItemsSource="{Binding SortedLocks}"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:LockViewModel">
+                    <ViewCell>
+                        <views:LockView BindingContext="{Binding}" />
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <notifications:NotificationsStatusView Grid.Column="2" Grid.Row="2"/>
+    </Grid>
+
+</ContentPage>

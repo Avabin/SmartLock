@@ -25,6 +25,22 @@ public static class ApplicationHostBuilderExtensions
         return builder;
     }
     
+    public static HostApplicationBuilder UseOrleansStrategy(this HostApplicationBuilder builder, Strategy strategy)
+    {
+        ISiloStrategy siloStrategy = strategy.Value switch
+        {
+            Strategy.Redis => new RedisSiloStrategy(),
+            Strategy.Local => new LocalSiloStrategy(),
+            Strategy.Mongo => new MongoSiloStrategy(),
+            Strategy.AzureTable => new AzureTableSiloStrategy(),
+            _ => throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null)
+        };
+        
+        siloStrategy.Configure(builder);
+        
+        return builder;
+    }
+    
     public static HostApplicationBuilder UseOrleansClientStrategy(this HostApplicationBuilder builder, Strategy strategy)
     {
         IClientStrategy clientStrategy = strategy.Value switch

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Orleans.TestingHost;
 using SmartLock.Orleans.Core;
 using SmartLock.Streams.RabbitMQ.Configurators;
+using Yolov8.Client;
 
 namespace Tests.Shared.SiloConfigurators;
 
@@ -23,6 +24,8 @@ public class MongoTestSiloBuilderConfigurator : ISiloConfigurator
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(Configs)
             .Build();
+        var yoloBaseUrl = Environment.GetEnvironmentVariable("YOLO_BASE_URL") ?? "http://localhost:50051";
+        siloBuilder.Services.AddYoloClient(yoloBaseUrl);
         var mongoConnectionString = configuration.GetConnectionString("Mongo");
         var dbName = MongoTestSiloBuilderConfigurator.DbName;
         siloBuilder.UseMongoDBClient(mongoConnectionString)

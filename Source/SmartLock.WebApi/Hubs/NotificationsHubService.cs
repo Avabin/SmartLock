@@ -15,6 +15,7 @@ public class NotificationsHubService
     private readonly IClusterClient _client;
     private readonly ILogger<NotificationsHubService> _logger;
     private readonly IHubContext<NotificationsHub, INotificationsHubClient> _hubContext;
+    private readonly IStreamProvider _streamProvider;
 
     public ConcurrentDictionary<StreamId, StreamSubscriptionHandle<Notification<IEvent>>> Subscriptions { get; } =
         new();
@@ -26,6 +27,7 @@ public class NotificationsHubService
         _client = client;
         _logger = logger;
         _hubContext = hubContext;
+        _streamProvider = _client.GetStreamProvider(StreamProviderConstants.DefaultStreamProviderName);
     }
 
     public async Task SubscribeAsync(string ns, string streamId, string connectionId)
@@ -43,7 +45,17 @@ public class NotificationsHubService
         // try to resume subscription if it exists
         if (Subscriptions.TryGetValue(streamKey, out var h))
         {
-            await h.ResumeAsync(async (notification, token) => await HandleMessageAsync(streamKey.ToString(), notification));
+            try
+            {
+                await h.ResumeAsync(async (notification, token) => await HandleMessageAsync(streamKey.ToString(), notification));
+            }
+            catch (InvalidOperationException e)
+            {
+                // h is no longer valid
+                _logger.LogWarning(e, "Failed to resume subscription to {Namespace}/{StreamId}", ns, streamId);
+                Subscriptions.TryRemove(streamKey, out _);
+
+            }
             await _hubContext.Groups.AddToGroupAsync(connectionId, streamKey.ToString());
             Connections.AddOrUpdate(connectionId, new ConcurrentBag<StreamId> {streamKey}, (_, bag) =>
             {
@@ -53,8 +65,8 @@ public class NotificationsHubService
             });
             return;
         }
-        
-        var handle = await _client.GetStreamProvider(StreamProviderConstants.DefaultStreamProviderName)
+
+        var handle = await _streamProvider
             .GetStream<Notification<IEvent>>(streamKey)
             .SubscribeAsync(async (notification, token) => await HandleMessageAsync(streamKey.ToString(), notification));
         

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:settings="using:SmartLock.UI.Features.Settings"
+             x:Class="SmartLock.UI.Features.Settings.SettingsView" x:DataType="settings:SettingsViewModel">
+    <ContentView.Content>
+        <Grid Padding="15" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Device ID" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" VerticalTextAlignment="Center"/>
+            <Entry Text="{Binding DeviceId}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Margin="5" IsReadOnly="True"/>
+            <Label Text="Name" Grid.Row="1" Grid.Column="0" Margin="0,0,0,5"  VerticalTextAlignment="Center"/>
+            <Entry Text="{Binding Name}" Grid.Row="1" Grid.Column="1" Margin="5" Grid.ColumnSpan="3"/>
+            <Label Text="Default building" Grid.Row="2" Grid.Column="0" Margin="0,0,0,5"  VerticalTextAlignment="Center"/>
+            <Entry Text="{Binding DefaultBuilding}" Grid.Row="2" Grid.Column="1" Margin="5" Grid.ColumnSpan="3"/>
+            <Button Text="Fetch" Command="{Binding LoadSettingsCommand}" Grid.Row="5" Grid.Column="2" Margin="0,0,5,0"/>
+            <Button Text="Save" Command="{Binding SaveSettingsCommand}" MaximumWidthRequest="100" HorizontalOptions="End" Grid.Row="5" Grid.Column="3"  Margin="5,0,0,0" />
+        </Grid>
+    </ContentView.Content>
+</ContentView>
