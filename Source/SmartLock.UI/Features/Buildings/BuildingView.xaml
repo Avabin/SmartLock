@@ -2,16 +2,12 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
              xmlns:ui="clr-namespace:SmartLock.UI"
              xmlns:converters="clr-namespace:SmartLock.UI.Converters"
-             x:Class="SmartLock.UI.Features.Buildings.Views.BuildingView" x:DataType="viewModels:BuildingViewModel"
+             xmlns:buildings="clr-namespace:SmartLock.UI.Features.Buildings"
+             xmlns:locks="clr-namespace:SmartLock.UI.Features.Buildings.Locks"
+             x:Class="SmartLock.UI.Features.Buildings.BuildingView" x:DataType="buildings:BuildingViewModel"
              Shell.NavBarIsVisible="false">
-    <ContentView.Resources>
-        <ResourceDictionary>
-            <converters:LockViewModelToFontImageSourceConverter x:Key="LockViewModelToFontImageSourceConverter" />
-        </ResourceDictionary>
-    </ContentView.Resources>
     <HorizontalStackLayout Margin="5,5,5,5" HorizontalOptions="Fill" VerticalOptions="Fill">
         <Image>
             <Image.Source>
@@ -27,17 +23,8 @@
                 <LinearItemsLayout Orientation="Horizontal" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:LockViewModel">
-                    <ViewCell>
-                        <Image>
-                            <Image.Source>
-                                <FontImageSource FontFamily="MaterialIconsRegular"
-                                                 Size="20"
-                                                 Glyph="{Binding .,Converter={StaticResource LockViewModelToFontImageSourceConverter}}"
-                                                 Color="{Binding LockColor}" />
-                            </Image.Source>
-                        </Image>
-                    </ViewCell>
+                <DataTemplate x:DataType="locks:LockViewModel">
+                    <locks:LockIconView />
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

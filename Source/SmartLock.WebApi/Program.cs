@@ -43,17 +43,5 @@ app.MapControllers();
 app.MapHub<NotificationsHub>(INotificationsHubClient.HubPath);
 
 await app.StartAsync();
-
-var clusterClient = app.Services.GetRequiredService<IClusterClient>();
-var streamProvider = clusterClient.GetStreamProvider(StreamProviderConstants.DefaultStreamProviderName);
-var stream = streamProvider.GetStream<Notification<IEvent>>(StreamId.Create(StreamProviderConstants.NotificationsNamespace, "Building 1"));
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-var handle = await stream.SubscribeAsync(async (notification, token) =>
-{
-    logger.LogInformation("Received notification: {@Notification}", notification);
-});
-
 await app.WaitForShutdownAsync();
-
-await handle.UnsubscribeAsync();
 public partial class Program { }

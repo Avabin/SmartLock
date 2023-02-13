@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Orleans.EventSourcing;
@@ -132,38 +133,42 @@ public class JournaledBuildingGrain : JournaledGrain<JournaledBuildingState, Bui
 [GenerateSerializer]
 public class JournaledBuildingState
 {
-    [Id(0)] public ImmutableDictionary<LocationModel, LockModel> Locks { get; set; } = ImmutableDictionary<LocationModel, LockModel>.Empty;
+    [Id(0)] public Dictionary<LocationModel, LockModel> Locks { get; set; } = new();
 
     public async Task Apply(AddLock addLock)
     {
-        Locks = Locks.Add(addLock.Lock, new LockModel(addLock.Lock, false));
+        Locks.Add(addLock.Lock, new LockModel(addLock.Lock, false));
     }
     
     public async Task Apply(OpenLock openLock)
     {
         var @lock = Locks[openLock.Location];
-        Locks = Locks.SetItem(openLock.Location, @lock with { IsOpen = true });
+        Locks.Remove(openLock.Location);
+        Locks.Add(openLock.Location, @lock with { IsOpen = true });
     }
     
     public async Task Apply(CloseLock closeLock)
     {
         var @lock = Locks[closeLock.Location];
-        Locks = Locks.SetItem(closeLock.Location, @lock with { IsOpen = false });
+        Locks.Remove(closeLock.Location);
+        Locks.Add(closeLock.Location, @lock with { IsOpen = false });
     }
 
     public async Task Apply(OpenAllLocks openAllLocks)
     {
-        Locks = Locks.SetItems(Locks.Select(x => new KeyValuePair<LocationModel, LockModel>(x.Key, x.Value with { IsOpen = true })));
+        var locks = Locks.Select(x => new KeyValuePair<LocationModel, LockModel>(x.Key, x.Value with { IsOpen = true }));
+        Locks = new Dictionary<LocationModel, LockModel>(locks);
     }
     
     public async Task Apply(CloseAllLocks closeAllLocks)
     {
-        Locks = Locks.SetItems(Locks.Select(x => new KeyValuePair<LocationModel, LockModel>(x.Key, x.Value with { IsOpen = false })));
+        var locks = Locks.Select(x => new KeyValuePair<LocationModel, LockModel>(x.Key, x.Value with { IsOpen = false }));
+        Locks = new Dictionary<LocationModel, LockModel>(locks);
     }
 
     public async Task Apply(RemoveLock removeLock)
     {
-        Locks = Locks.Remove(removeLock.Lock);
+        Locks.Remove(removeLock.Lock);
     }
 };
 

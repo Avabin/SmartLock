@@ -23,7 +23,7 @@ public static class SiloBuilderExtensions
     ///     Configure silo to use RabbitMQ persistent streams.
     /// </summary>
     public static ISiloBuilder AddRabbitMQStreams(this ISiloBuilder builder, string name,
-        Action<RabbitMQSiloConfigurator> configure = null)
+        Action<RabbitMQSiloConfigurator>? configure = null)
     {
         var configurator = new RabbitMQSiloConfigurator(name,
             configureServicesDelegate => builder.ConfigureServices(configureServicesDelegate));
@@ -35,14 +35,14 @@ public static class SiloBuilderExtensions
     {
         
         var rabbitHost = section.GetValue<string?>("Host") ?? "127.0.0.1";
-        var rabbitPort = section.GetValue<int?>("Port") ?? 5672;
+        var rabbitPort = section.GetValue<int?>("Port") ?? 5552;
         var rabbitUser = section.GetValue<string?>("UserName") ?? "guest";
         var rabbitPassword = section.GetValue<string?>("Password") ?? "guest";
         var rabbitVirtualHost = section.GetValue<string?>("VirtualHost") ?? "/";
         var rabbitClientName = section.GetValue<string?>("ClientName") ?? $"SmartLock-{Random.Shared.NextInt64():X}";
         EndPoint endpoint = IPAddress.TryParse(rabbitHost, out _)
             ? IPEndPoint.Parse($"{rabbitHost}:{rabbitPort}")
-            : new DnsEndPoint(rabbitHost, rabbitPort, AddressFamily.InterNetwork);
+            : new DnsEndPoint(rabbitHost, rabbitPort);
         builder.AddRabbitMQStreams(name, options =>
         {
             options.StreamSystemConfig = new StreamSystemConfig

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Buffers;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
 using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
@@ -19,9 +20,10 @@ public class DetectionController : ControllerBase
     [HttpPost("detect")]
     public async Task<IReadOnlyList<DetectedObjectModel>> DetectAsync([FromServices] IClusterClient client, [FromServices] IObjectStorage objectStorage, [FromForm] IFormFile file)
     {
-        using var ms = new MemoryStream();
-        await file.CopyToAsync(ms);
-        var detectionResults = await client.GetGrain<IDetectorGrain>(Guid.NewGuid()).DetectAsync(new DetectionRequest(ms.ToArray().ToImmutableArray()));
+        var stream = file.OpenReadStream();
+        var rent = MemoryPool<byte>.Shared.Rent((int)file.Length);
+        _ = await stream.ReadAsync(rent.Memory, CancellationToken.None);
+        var detectionResults = await client.GetGrain<IDetectorGrain>(Guid.NewGuid()).DetectAsync(new DetectionRequest(rent.Memory.ToArray().ToImmutableArray()));
         return detectionResults.SelectMany(x => x.Detections).ToList();
     }
 

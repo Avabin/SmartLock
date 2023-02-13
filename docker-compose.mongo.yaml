@@ -1,0 +1,69 @@
+# mongo service
+services:
+  mongo:
+    image: mongo:latest
+    container_name: smartlock-mongo
+    restart: always
+    ports:
+      - 27017:27017
+  rabbitmq:
+    image: rabbitmq:streams
+    build:
+      dockerfile: rabbitmq/Dockerfile
+    container_name: smartlock-rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 5552:5552
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+  yolov8-api:
+    image: ghcr.io/avabin/smartlock/yolov8-api:latest
+    container_name: smartlock-yolov8-api
+    restart: always
+    ports:
+      - 50051:50051
+  # silo
+  silo:
+    image: ghcr.io/avabin/smartlock/silo:latest
+    container_name: smartlock-silo
+    depends_on:
+      - mongo
+      - rabbitmq
+      - yolov8-api
+    build:
+      dockerfile: Source/SmartLock.Silo/Dockerfile
+      context: .
+    restart: always
+    ports:
+      - 30000:30000
+      - 11111:11111
+    environment:
+      - DOTNET_ENVIRONMENT=Docker
+      - DOTNET_ConnectionStrings__Mongo=mongodb://mongo:27017
+      - DOTNET_SiloStrategy=Mongo
+      - DOTNET_Orleans__SiloPort=11111
+      - DOTNET_Orleans__ClusterId=SmartLock
+      - DOTNET_Orleans__ServiceId=Silo
+      - DOTNET_RabbitMQ__Host=rabbitmq
+  # api
+  api:
+    image: ghcr.io/avabin/smartlock/api:latest
+    container_name: smartlock-api
+    restart: always
+    depends_on:
+      - mongo
+      - rabbitmq
+      - silo
+    ports:
+      - 5000:5000
+    environment:
+      - DOTNET_ENVIRONMENT=Docker
+      - DOTNET_ConnectionStrings__Mongo=mongodb://mongo:27017
+      - DOTNET_ClientStrategy=Mongo
+      - DOTNET_RabbitMQ__Host=rabbitmq
+      - DOTNET_Orleans__ClusterId=SmartLock
+      - DOTNET_Orleans__ServiceId=WebApi
+      - DOTNET_URLS=http://+:5000

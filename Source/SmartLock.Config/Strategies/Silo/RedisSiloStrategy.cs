@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using OpenTelemetry.Trace;
 using SmartLock.Streams.RabbitMQ.Configurators;
 
 namespace SmartLock.Config.Strategies.Silo;
@@ -12,6 +13,14 @@ public class RedisSiloStrategy : SiloStrategyBase
         var siloPort = configuration.GetValue<int?>("Orleans:SiloPort") ?? 11111;
         var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork); 
         builder.ConfigureEndpoints(ipAddress, siloPort, 30000);
+        
+        builder.Services.AddOpenTelemetry().WithTracing(tracing =>
+        {
+            tracing.AddRedisInstrumentation();
+            
+            tracing.AddSource("SmartLock.Streams.RabbitMQProducer");
+            tracing.AddSource("SmartLock.Streams.RabbitMQConsumer");
+        });
         builder.UseRedisClustering(options =>
         {
             options.Database = 1;

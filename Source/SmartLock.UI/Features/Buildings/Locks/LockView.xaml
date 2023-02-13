@@ -5,8 +5,8 @@
              xmlns:converters="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:ui="clr-namespace:SmartLock.UI"
              xmlns:global="clr-namespace:"
-             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
-             x:Class="SmartLock.UI.Features.Buildings.Views.LockView" x:DataType="viewModels:LockViewModel">
+             xmlns:locks="clr-namespace:SmartLock.UI.Features.Buildings.Locks"
+             x:Class="SmartLock.UI.Features.Buildings.Locks.LockView" x:DataType="locks:LockViewModel">
     <ContentView.Resources>
         <ResourceDictionary>
             <converters:BoolToObjectConverter x:Key="BoolToObjectConverter">

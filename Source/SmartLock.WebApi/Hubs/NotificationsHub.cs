@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.SignalR;
 using SmartLock.Client;
 using SmartLock.Client.NotificationHub;
 using SmartLock.Orleans.Core;
@@ -16,8 +17,11 @@ public class NotificationsHub : Hub<INotificationsHubClient>
         _service = service;
     }
     
-    public async Task SubscribeAsync(string ns, string streamId) =>
+    public async Task SubscribeAsync(string ns, string streamId)
+    {
+
         await _service.SubscribeAsync(ns, streamId, Context.ConnectionId);
+    }
 
     public async Task SubscribeNotificationsAsync(string streamId) => 
         await SubscribeAsync(StreamProviderConstants.NotificationsNamespace, streamId);

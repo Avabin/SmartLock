@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using Orleans.Streams;
 using RabbitMQ.Stream.Client;
 using RabbitMQ.Stream.Client.AMQP;
@@ -13,6 +16,8 @@ internal class RabbitMQProducer : IAsyncDisposable
     private Producer _producer;
     private object _lock = new();
     private Task<Producer> _producerCreatingTask;
+    private static ActivitySource _activitySource = new($"SmartLock.Streams.{nameof(RabbitMQProducer)}");
+    private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
     public RabbitMQProducer(RabbitMQStreamSystemProvider streamSystemProvider, RabbitMQQueueProvider rabbitMqQueueProvider, QueueId queueId)
     {
@@ -23,16 +28,40 @@ internal class RabbitMQProducer : IAsyncDisposable
 
     public async Task SendMessage(byte[] messageBody)
     {
+        var activityName = $"{nameof(RabbitMQProducer)}.{nameof(SendMessage)}";
+        using var activity = _activitySource.StartActivity(activityName, ActivityKind.Producer);
+        activity?.SetIdFormat(ActivityIdFormat.W3C);
+        activity?.AddTag("rpc.system", "rabbitmq");
+        activity?.AddTag("rpc.service", "SmartLock.Streams.RabbitMQ.RabbitMQProducer");
+        activity?.AddTag("rpc.method", "SendMessage");
+        activity?.AddTag("rpc.queue", _queueId.ToString());
         var producer = await GetProducer().ConfigureAwait(false);
-
-        await producer.Send(new Message(messageBody)
+        var message = new Message(messageBody)
         {
             ApplicationProperties =
                 new ApplicationProperties
                 {
                     { RabbitMQMessage.CreatedAtFieldName, DateTime.UtcNow.ToString(RabbitMQMessage.Format) }
                 }
-        }).ConfigureAwait(false);
+        };
+        // Depending on Sampling (and whether a listener is registered or not), the
+        // activity above may not be created.
+        // If it is created, then propagate its context.
+        // If it is not created, the propagate the Current context,
+        // if any.
+        ActivityContext contextToInject = default;
+        if (activity != null)
+        {
+            contextToInject = activity.Context;
+        }
+        else if (Activity.Current != null)
+        {
+            contextToInject = Activity.Current.Context;
+        }
+        
+        Propagator.Inject(new PropagationContext(contextToInject, Baggage.Current), message, (m, k, v) => m.ApplicationProperties.TryAdd(k, v));
+
+        await producer.Send(message).ConfigureAwait(false);
     }
 
     private async Task<Producer> GetProducer()

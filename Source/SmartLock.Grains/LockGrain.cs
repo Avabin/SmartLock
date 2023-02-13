@@ -1,9 +1,11 @@
-﻿using SmartLock.GrainInterfaces;
+﻿using Orleans.Concurrency;
+using SmartLock.GrainInterfaces;
 
 namespace SmartLock.Grains;
 
 public class LockGrain : Grain<LockGrainState>, ILockGrain
 {
+    [ReadOnly]
     public async ValueTask<bool> IsLockedAsync() => State.IsLocked;
 
     public async ValueTask LockAsync()

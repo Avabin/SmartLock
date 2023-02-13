@@ -20,7 +20,7 @@ public static class ClientBuilderExtensions
     ///     Configure client to use RabbitMQ persistent streams.
     /// </summary>
     public static IClientBuilder AddRabbitMQStreams(this IClientBuilder builder, string name,
-        Action<RabbitMQClientConfigurator> configure = null)
+        Action<RabbitMQClientConfigurator>? configure = null)
     {
         var configurator = new RabbitMQClientConfigurator(name, builder);
         configure?.Invoke(configurator);

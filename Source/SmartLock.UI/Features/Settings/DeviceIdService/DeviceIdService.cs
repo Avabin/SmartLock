@@ -1,6 +1,4 @@
-﻿using SmartLock.UI.Features.Settings;
-
-namespace SmartLock.UI.Services;
+﻿namespace SmartLock.UI.Features.Settings.DeviceIdService;
 
 public partial class DeviceIdService : IDeviceIdService
 {

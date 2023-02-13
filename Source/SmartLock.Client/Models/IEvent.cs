@@ -11,4 +11,7 @@ namespace SmartLock.Client.Models;
 [MemoryPackUnion(5, typeof(OpenLock))]
 [MemoryPackUnion(6, typeof(CloseLock))]
 public partial interface IEvent
-{}
+{
+    string? TraceParent { get; }
+    string? TraceState { get; }
+}

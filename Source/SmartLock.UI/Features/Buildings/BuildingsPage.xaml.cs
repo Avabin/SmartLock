@@ -1,7 +1,4 @@
-﻿using SmartLock.UI.Features.Buildings.ViewModels;
-using SmartLock.UI.Features.Buildings.Views;
-
-namespace SmartLock.UI.Features.Buildings.Pages;
+﻿namespace SmartLock.UI.Features.Buildings;
 
 public partial class BuildingsPage : ContentPage
 {

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SmartLock.UI.Features.Notifications;
-using SmartLock.UI.ViewModels;
 
 namespace SmartLock.UI;
 

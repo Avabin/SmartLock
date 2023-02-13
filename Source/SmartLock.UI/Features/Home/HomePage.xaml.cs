@@ -2,9 +2,9 @@
 
 namespace SmartLock.UI.Pages;
 
-public partial class MainPage : ContentPage
+public partial class HomePage : ContentPage
 {
-    public MainPage(MainViewModel viewModel)
+    public HomePage(HomeViewModel viewModel)
     {
         BindingContext = viewModel;
         InitializeComponent();

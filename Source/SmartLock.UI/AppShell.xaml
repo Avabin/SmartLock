@@ -7,8 +7,8 @@
     xmlns:pages="clr-namespace:SmartLock.UI.Pages"
     xmlns:notifications="clr-namespace:SmartLock.UI.Features.Notifications"
     xmlns:pages1="clr-namespace:SmartLock.UI.Features.Detection.Pages"
-    xmlns:pages2="clr-namespace:SmartLock.UI.Features.Buildings.Pages"
     xmlns:settings="clr-namespace:SmartLock.UI.Features.Settings"
+    xmlns:buildings="clr-namespace:SmartLock.UI.Features.Buildings"
     Shell.FlyoutBehavior="Disabled" x:DataType="local:ShellViewModel">
     <Shell.TitleView>
         <Grid>
@@ -18,7 +18,7 @@
     <TabBar>
         <ShellContent
             Title="Home"
-            ContentTemplate="{DataTemplate pages:MainPage}"
+            ContentTemplate="{DataTemplate pages:HomePage}"
             Route="MainPage" />
     
         <ShellContent 
@@ -27,7 +27,7 @@
             Route="DetectionPage" />
         <ShellContent
             Title="Buildings"
-            ContentTemplate="{DataTemplate pages2:BuildingsPage}"
+            ContentTemplate="{DataTemplate buildings:BuildingsPage}"
             Route="BuildingsPage" />
     
         <ShellContent

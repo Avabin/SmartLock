@@ -1,6 +1,4 @@
-﻿using Windows.System.Profile;
-
-namespace SmartLock.UI.Services;
+﻿namespace SmartLock.UI.Features.Settings.DeviceIdService;
 
 public partial class DeviceIdService
 {

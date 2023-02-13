@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="SmartLock.UI.Features.Buildings.BuildingsPage"
+    x:DataType="buildings:BuildingsViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:buildings="clr-namespace:SmartLock.UI.Features.Buildings"
+    xmlns:maps="clr-namespace:SmartLock.UI.Features.Maps"
+    xmlns:models="clr-namespace:SmartLock.Client.Models;assembly=SmartLock.Client"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Resources>
+        <ResourceDictionary />
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="1*, 20*, 4*" RowDefinitions="Auto, *,Auto,Auto">
+        <maps:MapView Grid.Column="0" Grid.ColumnSpan="3" />
+        <ListView
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Grid.Row="1"
+            ItemsSource="{Binding Buildings}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <HorizontalStackLayout>
+                            <buildings:BuildingView BindingContext="{Binding .}">
+                                <buildings:BuildingView.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Buttons="Primary"
+                                        NumberOfTapsRequired="2"
+                                        Tapped="TapGestureRecognizer_OnTapped" />
+                                </buildings:BuildingView.GestureRecognizers>
+                            </buildings:BuildingView>
+                        </HorizontalStackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Entry
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Grid.Row="2"
+            HorizontalOptions="Fill"
+            Text="{Binding Location}"
+            VerticalOptions="End" />
+        <Button
+            Command="{Binding AddBuildingCommand}"
+            Grid.Column="2"
+            Grid.Row="2"
+            HorizontalOptions="Fill"
+            Text="Add"
+            VerticalOptions="Fill" />
+
+
+    </Grid>
+</ContentPage>

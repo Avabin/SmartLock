@@ -1,4 +1,5 @@
-﻿using MemoryPack;
+﻿using System.Diagnostics;
+using MemoryPack;
 
 namespace SmartLock.Client.Models;
 
@@ -10,7 +11,6 @@ namespace SmartLock.Client.Models;
 [MemoryPackUnion(3, typeof(CloseAllLocks))]
 [MemoryPackUnion(4, typeof(OpenLock))]
 [MemoryPackUnion(5, typeof(CloseLock))]
-public abstract partial record BuildingEvent([property: Id(0)] LocationModel Building) : IEvent
+public abstract partial record BuildingEvent([property: Id(0)] LocationModel Building, [property: Id(1)] string? TraceParent,[property: Id(2)] string? TraceState) : IEvent
 {
-    
 }

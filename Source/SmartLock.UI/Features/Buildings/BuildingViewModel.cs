@@ -9,8 +9,9 @@ using CommunityToolkit.Mvvm.Input;
 using SmartLock.Client.HttpClient;
 using SmartLock.Client.Models;
 using SmartLock.Client.NotificationHub;
+using SmartLock.UI.Features.Buildings.Locks;
 
-namespace SmartLock.UI.Features.Buildings.ViewModels;
+namespace SmartLock.UI.Features.Buildings;
 
 public partial class BuildingViewModel : ObservableObject, IDisposable
 {

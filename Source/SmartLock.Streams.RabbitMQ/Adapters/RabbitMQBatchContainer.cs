@@ -47,12 +47,13 @@ public record RabbitMqBatchContainer : IBatchContainer
     public static RabbitMqBatchContainer FromRabbit(Serializer<RabbitMqBatchContainer> serializer,
         ReadOnlySequence<byte> messageBody, string createdAt, ulong offset)
     {
+        
         var batchContainer = serializer.Deserialize(messageBody);
         batchContainer._sequenceTokenV2 = new EventSequenceTokenV2(Convert.ToInt64(offset));
         batchContainer.CreatedAt = createdAt;
-
         return batchContainer;
     }
+
 
 
     public static byte[] ToRabbitMqMessage<T>(Serializer<RabbitMqBatchContainer> serializer,

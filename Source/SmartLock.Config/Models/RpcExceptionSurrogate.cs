@@ -26,7 +26,7 @@ public class RpcExceptionSurrogateConverter : IConverter<RpcException, RpcExcept
     {
         var status = JsonConvert.DeserializeObject<Status>(surrogate.Status, _settings);
         var metadata = JsonConvert.DeserializeObject<Metadata>(surrogate.Trailers, _settings);
-        return new RpcException(status, metadata, surrogate.Message);
+        return new RpcException(status, metadata ?? Metadata.Empty, surrogate.Message);
     }
 
     public RpcExceptionSurrogate ConvertToSurrogate(in RpcException value)

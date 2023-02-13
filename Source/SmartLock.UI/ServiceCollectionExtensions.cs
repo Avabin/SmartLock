@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using SmartLock.Client;
 using SmartLock.Client.Models;
-using SmartLock.UI.Features.Buildings.Pages;
-using SmartLock.UI.Features.Buildings.ViewModels;
+using SmartLock.UI.Features.Buildings;
+using SmartLock.UI.Features.Buildings.Locks;
 using SmartLock.UI.Features.Detection.Pages;
 using SmartLock.UI.Features.Detection.ViewModels;
 using SmartLock.UI.Features.Notifications;
 using SmartLock.UI.Features.Settings;
+using SmartLock.UI.Features.Settings.DeviceIdService;
 using SmartLock.UI.Pages;
-using SmartLock.UI.Services;
 using SmartLock.UI.ViewModels;
 
 namespace SmartLock.UI;
@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
         return services.AddSingleton<DetectionPage, DetectionViewModel>()
             .AddSingleton<BuildingsPage, BuildingsViewModel>()
             .AddTransient<BuildingPage, BuildingViewModel>()
-            .AddSingleton<MainPage, MainViewModel>()
+            .AddSingleton<HomePage, HomeViewModel>()
             .AddSingleton<SettingsPage, SettingsViewModel>()
             .AddSingleton<NotificationsStatusView, NotificationsStatusViewModel>();
     }

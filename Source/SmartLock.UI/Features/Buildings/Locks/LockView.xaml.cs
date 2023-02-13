@@ -1,4 +1,4 @@
-﻿namespace SmartLock.UI.Features.Buildings.Views;
+﻿namespace SmartLock.UI.Features.Buildings.Locks;
 
 public partial class LockView : ContentView
 {

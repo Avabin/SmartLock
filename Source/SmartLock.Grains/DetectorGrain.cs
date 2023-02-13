@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.Extensions.Logging;
+using Orleans.Concurrency;
 using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
 using Yolov8.Client;
@@ -16,6 +17,7 @@ public class DetectorGrain : Grain, IDetectorGrain
         _logger = logger;
         _client = client;
     }
+    
     public async ValueTask<IReadOnlyList<DetectionResult>> DetectAsync(string imgUrl)
     {
         _logger.LogInformation("Detecting objects in image {ImgUrl}", imgUrl);

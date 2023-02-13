@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SmartLock.UI.Features.Buildings.ViewModels;
 
-namespace SmartLock.UI.Features.Buildings.Pages;
+namespace SmartLock.UI.Features.Buildings;
 
 [QueryProperty(nameof(BuildingViewModel), nameof(BuildingViewModel))]
 public partial class BuildingPage : ContentPage

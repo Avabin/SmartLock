@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using SmartLock.UI.Features.Buildings.ViewModels;
+using SmartLock.UI.Features.Buildings.Locks;
 
 namespace SmartLock.UI.Converters;
 

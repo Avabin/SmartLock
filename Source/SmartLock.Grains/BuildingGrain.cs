@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Orleans.Concurrency;
 using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
 
@@ -6,10 +7,9 @@ namespace SmartLock.Grains;
 
 public class BuildingGrain : Grain<BuildingGrainState>, IBuildingGrain
 {
+    [ReadOnly]
     public async ValueTask<ILockGrain?> GetLockAsync(LocationModel locationModel) =>
-        State.Locks.TryGetValue(locationModel, out var lockId) 
-            ? GrainFactory.GetGrain<ILockGrain>(lockId.Value) 
-            : null;
+        State.Locks.Contains(locationModel) ? GrainFactory.GetGrain<ILockGrain>(locationModel) : null;
 
     public async ValueTask CreateLockAsync(LocationModel locationModel)
     {
@@ -28,17 +28,17 @@ public class BuildingGrain : Grain<BuildingGrainState>, IBuildingGrain
 public record BuildingGrainState
 {
     [Id(0)]
-    public ImmutableHashSet<LocationModel> Locks { get; set; } = ImmutableHashSet<LocationModel>.Empty; 
+    public List<LocationModel> Locks { get; set; } = new(); 
     
     /// <summary>
     /// Add a lock to the building.
     /// </summary>
     /// <param name="locationModel">The location of the lock.</param>
-    public void AddLock(LocationModel locationModel) => Locks = Locks.Add(locationModel);
+    public void AddLock(LocationModel locationModel) => Locks.Add(locationModel);
     
     /// <summary>
     /// Removes a lock from the building.
     /// </summary>
     /// <param name="locationModel">The location of the lock to remove.</param>
-    public void RemoveLock(LocationModel locationModel) => Locks = Locks.Remove(locationModel);
+    public void RemoveLock(LocationModel locationModel) => Locks.Remove(locationModel);
 }

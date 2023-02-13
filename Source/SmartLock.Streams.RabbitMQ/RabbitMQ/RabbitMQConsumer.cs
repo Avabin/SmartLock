@@ -1,5 +1,8 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using Orleans.Serialization;
 using Orleans.Streams;
 using RabbitMQ.Stream.Client;
@@ -62,6 +65,10 @@ internal class RabbitMQConsumer
     private readonly Serializer<RabbitMqBatchContainer> _serializer;
     private readonly RabbitMQStreamSystemProvider _streamSystemProvider;
     private IConsumer _consumer;
+    
+    
+    private static readonly ActivitySource ActivitySource = new($"SmartLock.Streams.{nameof(RabbitMQConsumer)}");
+    private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
     private string _queueName;
     //private int _consumerState;
@@ -109,10 +116,21 @@ internal class RabbitMQConsumer
         _queueName = await _rabbitMqQueueProvider.CreateOrGetQueue(_queueId).ConfigureAwait(false);
         await CreateConsumer((_, context, message) =>
             {
+                var parentContext = Propagator.Extract(default, message.ApplicationProperties, (o, s) => o.TryGetValue(s, out var value) ? new []{ value?.ToString()} : null);
+                Activity? activity = null;
+                if (parentContext.ActivityContext.TraceId != default)
+                {
+                    _logger.LogDebug("Received message with parent context {ParentContext}", parentContext.ActivityContext.TraceId);
+                    
+                    var activityName = $"{nameof(RabbitMQConsumer)} {message.Data.Contents.Length} bytes";
+                    Baggage.Current = parentContext.Baggage;
+                    activity = ActivitySource.StartActivity(activityName, ActivityKind.Consumer, parentContext.ActivityContext);
+                }
                 message.ApplicationProperties.TryGetValue(RabbitMQMessage.CreatedAtFieldName, out var createdAt);
-                _batchContainers.Enqueue(RabbitMqBatchContainer.FromRabbit(_serializer, message.Data.Contents,
-                    createdAt?.ToString(), context.Offset));
+                var container = RabbitMqBatchContainer.FromRabbit(_serializer, message.Data.Contents, createdAt?.ToString(), context.Offset);
+                _batchContainers.Enqueue(container);
 
+                activity?.Stop();
                 return Task.CompletedTask;
             })
             .ConfigureAwait(false);
@@ -120,6 +138,7 @@ internal class RabbitMQConsumer
 
     public Task<IReadOnlyList<RabbitMqBatchContainer>> DequeueMessages(int maxCount)
     {
+        
         var messages = new List<RabbitMqBatchContainer>(maxCount);
 
         while (messages.Count < maxCount && _batchContainers.TryDequeue(out var message))

@@ -3,10 +3,9 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SmartLock.UI.Features.Buildings.Pages;
 using SmartLock.UI.Features.Settings;
 
-namespace SmartLock.UI.Features.Buildings.ViewModels;
+namespace SmartLock.UI.Features.Buildings;
 
 public partial class BuildingsViewModel : ObservableObject, IDisposable
 {

@@ -2,7 +2,7 @@
 using SmartLock.Client.Models;
 using IEvent = SmartLock.Client.Models.IEvent;
 
-namespace SmartLock.UI.Features.Buildings.ViewModels;
+namespace SmartLock.UI.Features.Buildings.Locks;
 
 public partial class LockViewModel : ObservableObject
 {

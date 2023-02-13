@@ -1,4 +1,5 @@
-﻿using SmartLock.Client.Models;
+﻿using Orleans.Concurrency;
+using SmartLock.Client.Models;
 using SmartLock.GrainInterfaces;
 
 namespace SmartLock.Grains;

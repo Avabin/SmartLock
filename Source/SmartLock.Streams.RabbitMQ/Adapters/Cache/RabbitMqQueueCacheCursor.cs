@@ -28,7 +28,7 @@ internal class RabbitMqQueueCacheCursor : IQueueCacheCursor
 
     private void Initialize(bool isRefreshing = false)
     {
-        if ((_hadnshakeToken.SequenceNumber != 0) && _processingMessages.TryGetValue(_streamId, out var queue))
+        if (((_hadnshakeToken?.SequenceNumber ?? 0) != 0) && _processingMessages.TryGetValue(_streamId, out var queue))
         {
 
             //Check if next item in the stream queue is the one we are looking for

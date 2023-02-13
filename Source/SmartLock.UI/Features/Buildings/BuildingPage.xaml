@@ -2,10 +2,10 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:views="clr-namespace:SmartLock.UI.Features.Buildings.Views"
              xmlns:notifications="clr-namespace:SmartLock.UI.Features.Notifications"
-             xmlns:viewModels="clr-namespace:SmartLock.UI.Features.Buildings.ViewModels"
-             x:Class="SmartLock.UI.Features.Buildings.Pages.BuildingPage" x:DataType="viewModels:BuildingViewModel">
+             xmlns:locks="clr-namespace:SmartLock.UI.Features.Buildings.Locks"
+             xmlns:buildings="clr-namespace:SmartLock.UI.Features.Buildings"
+             x:Class="SmartLock.UI.Features.Buildings.BuildingPage" x:DataType="buildings:BuildingViewModel">
 
     <Grid Padding="30,0" RowDefinitions="Auto, *, Auto" ColumnDefinitions="1*,10*,1*">
         <Entry Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Location}" IsReadOnly="True" />
@@ -16,9 +16,9 @@
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:LockViewModel">
+                <DataTemplate x:DataType="locks:LockViewModel">
                     <ViewCell>
-                        <views:LockView BindingContext="{Binding}" />
+                        <locks:LockView BindingContext="{Binding}" />
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

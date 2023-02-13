@@ -5,7 +5,7 @@
              xmlns:viewModels="using:SmartLock.UI.ViewModels"
              xmlns:converters="clr-namespace:SmartLock.UI.Converters"
              xmlns:notifications="clr-namespace:SmartLock.UI.Features.Notifications"
-             x:Class="SmartLock.UI.Pages.MainPage" x:DataType="viewModels:MainViewModel">
+             x:Class="SmartLock.UI.Pages.HomePage" x:DataType="viewModels:HomeViewModel">
     <ContentPage.Resources>
         <ResourceDictionary>
         </ResourceDictionary>

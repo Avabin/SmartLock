@@ -36,5 +36,9 @@
 	<string>This app needs access to the photo gallery for picking photos and videos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to photos gallery for picking photos and videos.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location to display maps</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location to display maps</string>
 </dict>
 </plist>

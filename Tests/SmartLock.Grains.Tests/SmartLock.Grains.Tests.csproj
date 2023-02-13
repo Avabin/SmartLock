@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
         <OutputType>Dll</OutputType>
         <IsPackable>false</IsPackable>
+        <Configurations>Debug;Release;Silo</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

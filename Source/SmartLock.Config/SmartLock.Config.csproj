@@ -5,6 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Library</OutputType>
+        <Configurations>Debug;Release;Silo</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +22,11 @@
       <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="7.1.0" />
       <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="7.1.0" />
       <PackageReference Include="Microsoft.Orleans.Streaming.AzureStorage" Version="7.1.0" />
+      <PackageReference Include="MongoDB.Driver.Core.Extensions.OpenTelemetry" Version="1.0.0" />
+      <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.4.0-rc.4" />
+      <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.4.0-rc.4" />
+      <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.13" />
+      <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.7" />
       <PackageReference Include="Orleans.Clustering.Redis" Version="7.0.0" />
       <PackageReference Include="Orleans.Persistence.Redis" Version="7.0.0" />
       <PackageReference Include="Orleans.Providers.MongoDB" Version="7.4.0" />
